@@ -6,7 +6,7 @@ from functions import columns_features_after_takeoff
 
 def after_takeoff():
     
-    # ======================== Front ===============================>
+    # ======================== FRONT ===============================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
     
     # ======================== FORM ================================>  

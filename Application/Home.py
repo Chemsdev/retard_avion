@@ -7,15 +7,12 @@ base='dark'
 st.set_page_config(layout="wide")
 
 def main():
-    # ======================== Front ==============================>
+    # ======================== FRONT ==============================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
-    css_page_front()
-    
-    # ======================== Front ==============================>
+    css_page_front()    
     st.title("Bienvenue...")
     
-    
-    # ========================= SQL ================================>  
+    # ========================= SQL ===============================>  
     create_tables(
         table_name_1="after_takeoff",   
         table_name_2="prediction_after_takeoff",

@@ -6,8 +6,10 @@ import mysql.connector
 import pandas as pd
 
 # =======================================================================================================================================>
+#                                                            *UTILITAIRES*
+# =======================================================================================================================================>
 
-# Les paramètres de connexion.
+# Paramètre de connexion.
 cnx = mysql.connector.connect(
     user="chemsdine", 
     password="Ounissi69800", 
@@ -16,11 +18,9 @@ cnx = mysql.connector.connect(
     database="retard_avion", 
     ssl_disabled=False
 )
-
 cursor = cnx.cursor()    
 
-# Les colonnes des features : before_takeoff
-
+# Colonnes de la table before.
 columns_features_before_takeoff=[
     'MONTH', 
     'DAY_OF_MONTH', 
@@ -32,7 +32,7 @@ columns_features_before_takeoff=[
     'DISTANCE'
 ]
 
-# Les colonnes des features : after_takeoffafter_takeoff
+# Colonnes de la table after.
 columns_features_after_takeoff=[
     'MONTH', 
     'DAY_OF_MONTH', 
@@ -45,8 +45,8 @@ columns_features_after_takeoff=[
     'DEP_DELAY'
 ]
 
-
-# *SQL DATA BASE*
+# =======================================================================================================================================>
+#                                                            *SQL DATA BASE*
 # =======================================================================================================================================>
 
 # Fonction permettant de créer les tables dans une base de données.
@@ -103,8 +103,7 @@ def show_page(title:str, name_table_features:str, name_table_prediction:str):
         st.write(table2)
     
 # =======================================================================================================================================>
-
-# *FRONT*
+#                                                         *FRONT*
 # =======================================================================================================================================>
 
 # Fonction permettent de mettre un background.

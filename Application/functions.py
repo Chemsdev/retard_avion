@@ -129,3 +129,13 @@ def css_page_front():
     """, unsafe_allow_html=True)
 
 # =======================================================================================================================================>
+
+# Fonction permettent de supprimer 2 tables.
+def delete_content_tables(connexion=cnx):
+    cursor = connexion.cursor()
+    cursor.execute("DELETE FROM prediction_after_takeoff")
+    cursor.execute("DELETE FROM prediction_before_takeoff")
+    cursor.execute("DELETE FROM after_takeoff")
+    cursor.execute("DELETE FROM before_takeoff")
+    connexion.commit()
+    

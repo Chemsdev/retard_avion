@@ -124,6 +124,8 @@ def css_page_front():
         h1 {
             font-family: 'Comic Sans MS', cursive, sans-serif;
             text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+            font-color : #F5F5DC;
+            font-size:67px;
         }
     </style>
     """, unsafe_allow_html=True)

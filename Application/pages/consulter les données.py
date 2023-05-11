@@ -1,13 +1,12 @@
 import pandas as pd
 from functions import cnx
 import streamlit as st
-from functions import delete_content_tables, css_page_front, background_front
+from functions import delete_content_tables, background_front
 
 
 def data():
     
     # ===================== FRONT ==========================>  
-    css_page_front()
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
     
     # ===================== SQL ==========================>  

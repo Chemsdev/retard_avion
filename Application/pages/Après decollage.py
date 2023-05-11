@@ -8,9 +8,9 @@ def after_takeoff():
     
     # ======================== Front ===============================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
-    css_page_front()
     
     # ======================== FORM ================================>  
+    st.title("Vous souhaitez savoir ?")
     with st.form("formulaire_after_take_off"):
         st.write("**Veuillez remplir le formulaire**")
         value_features=[]

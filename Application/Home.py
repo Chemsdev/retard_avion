@@ -11,7 +11,8 @@ def main():
     css_page_front()
     
     # ======================== Front ==============================>
-    st.title("Bonjour")
+    st.title("Bienvenue")
+    
     
     # ========================= SQL ================================>  
     create_tables(

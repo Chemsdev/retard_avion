@@ -4,7 +4,6 @@ import streamlit as st
 import numpy as np
 import mysql.connector
 import pandas as pd
-import random
 
 # =======================================================================================================================================>
 
@@ -14,49 +13,81 @@ cnx = mysql.connector.connect(
     password="Ounissi69800", 
     host="chemsdineserver.mysql.database.azure.com", 
     port=3306, 
-    database="avion_retard", 
+    database="retard_avion", 
     ssl_disabled=False
 )
+
+# Les colonnes des features : before_takeoff
+
+columns_features_before_takeoff=[
+    'MONTH', 
+    'DAY_OF_MONTH', 
+    'DAY_OF_WEEK',
+    'CRS_DEP_TIME',
+    'CRS_ARR_TIME',
+    'CRS_ELAPSED_TIME',
+    'CARRIER',
+    'DISTANCE'
+]
+
+# Les colonnes des features : after_takeoffafter_takeoff
+columns_features_after_takeoff=[
+    'MONTH', 
+    'DAY_OF_MONTH', 
+    'DAY_OF_WEEK',
+    'CRS_DEP_TIME',
+    'CRS_ARR_TIME',
+    'CRS_ELAPSED_TIME',
+    'CARRIER',
+    'DISTANCE',
+    'DEP_DELAY'
+]
 
 
 
 # *SQL DATA BASE*
 # =======================================================================================================================================>
 
-# Fonction permettent de créer les tables dans une base de données.
-def create_tables(table_name_1, table_name_2, connexion=cnx):    
+# Fonction permettant de créer les tables dans une base de données.
+def create_tables(table_name_1:str, table_name_2:str, features_columns:list, connexion=cnx):    
     cursor = connexion.cursor()
-    col_names = ['feature_' + str(i) for i in range(3)]
-    col_names_str = ','.join([f'{i} REAL' for i in col_names])
-    cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table_name_1}
-                (id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, {col_names_str})''')
     
+    # On met en string les éléments de la liste qui contient le nom des colonnes.
+    col_names_str = ','.join([f'{i} REAL' for i in features_columns])
+    
+    # On créer la table des features
+    cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table_name_1}
+                (id INT AUTO_INCREMENT PRIMARY KEY, {col_names_str})''')
     print(f"Table '{table_name_1}' créée avec succès.")
+    
+    # On créer la table des prédictions
     cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table_name_2}
-                (id_fk int NOT NULL DEFAULT 0,
+                (id INT AUTO_INCREMENT PRIMARY KEY,
+                id_fk INT,
                 y_pred TEXT,
                 FOREIGN KEY (id_fk) REFERENCES {table_name_1}(id))''')
     print(f"Table '{table_name_2}' créée avec succès.")
+    
     connexion.commit()
     
 # =======================================================================================================================================>
 
 # Fonction permettent d'insérer des données dans les tables cible.
-def data_insert(table_name_1, table_name_2, connexion=cnx):
+def data_insert(table_name_1: str, table_name_2: str, value_features: list, columns_features: list, y_pred: str, connexion=cnx):
     cursor = connexion.cursor()
-    code_id = "".join([str(random.randint(0, 10)) for _ in range(5)])  
-    
-    table1_columns = ["id",  "feature_0",  "feature_1",  "feature_2"]
-    table1_values  = [code_id,     "0",          "1",          "2"]
-    table1_sql = f"INSERT INTO {table_name_1} ({', '.join(table1_columns)}) VALUES ({', '.join(['%s' for i in range(4)])})"
-    cursor.execute(table1_sql, table1_values)
-    
-    table2_columns = ["id_fk",  "y_pred"]
-    table2_values  = [code_id,  "yes"]
-    table2_sql = f"INSERT INTO {table_name_2} ({', '.join(table2_columns)}) VALUES ({', '.join(['%s' for i in range(2)])})"
+
+    # On injecte les données dans la table des Features
+    table1_sql = f"INSERT INTO {table_name_1} ({', '.join(columns_features)}) VALUES ({', '.join(['%s' for _ in range(len(columns_features))])})"
+    cursor.execute(table1_sql, value_features)
+    inserted_id = cursor.lastrowid
+
+    # On injecte les données dans la table des Prédictions en utilisant l'ID inséré précédemment
+    table2_columns = ["id_fk", "y_pred"]
+    table2_values = [inserted_id, y_pred]
+    table2_sql = f"INSERT INTO {table_name_2} ({', '.join(table2_columns)}) VALUES ({', '.join(['%s' for _ in range(len(table2_columns))])})"
     cursor.execute(table2_sql, table2_values)
-    print(f"Données insérées avec succès.")
-    
+
+    print("Données insérées avec succès.")
     connexion.commit()
     
 # =======================================================================================================================================>

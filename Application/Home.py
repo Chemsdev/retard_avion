@@ -7,6 +7,7 @@ base='dark'
 st.set_page_config(layout="wide")
 
 def main():
+    
     # ======================== FRONT ==============================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
     css_page_front()    

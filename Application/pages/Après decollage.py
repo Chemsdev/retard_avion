@@ -3,7 +3,6 @@ import streamlit as st
 from functions import create_tables, background_front, data_insert
 from functions import columns_features_after_takeoff
 
-
 def after_takeoff():
     
     # ======================== FRONT ===============================>

@@ -44,7 +44,6 @@ columns_features_after_takeoff=[
 ]
 
 
-
 # *SQL DATA BASE*
 # =======================================================================================================================================>
 
@@ -104,6 +103,7 @@ def background_front(url:str):
              background-image: url({url});
              background-attachment: fixed;
              background-size: cover
+            
          }}
          </style>
          """,

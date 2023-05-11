@@ -3,15 +3,16 @@ import streamlit as st
 from functions import create_tables, background_front, css_page_front, data_insert
 from functions import columns_features_before_takeoff, columns_features_after_takeoff
 
+base='dark'
+st.set_page_config(layout="wide")
+
 def main():
-    
-    
     # ======================== Front ==============================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
     css_page_front()
     
     # ======================== Front ==============================>
-    st.title("Bienvenue")
+    st.title("Bienvenue...")
     
     
     # ========================= SQL ================================>  
@@ -28,5 +29,8 @@ def main():
     )
 
 main()
+
+
+
 
 

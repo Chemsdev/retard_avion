@@ -1,7 +1,8 @@
 # Import des utilitaires.
 import streamlit as st 
-from functions import create_tables, background_front, data_insert
-from functions import columns_features_after_takeoff
+import streamlit.components.v1 as components
+from functions import formulaire_traitement, background_front, encart_prediction, send_data_to_api
+from functions import columns_features_after_takeoff, columns_features_before_takeoff
 
 def after_takeoff():
     
@@ -9,23 +10,17 @@ def after_takeoff():
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
     
     # ======================== FORM ================================>  
-    st.title("Vous souhaitez savoir ?")
-    with st.form("formulaire_after_take_off"):
-        st.write("**Veuillez remplir le formulaire**")
-        value_features=[]
-        for i in columns_features_after_takeoff:
-            a = st.text_input(f'**Veuillez saisir {i}**')
-            value_features.append(a)
+    submitted, value_features = formulaire_traitement(titre="Vous souhaitez savoir ?", table="after")
             
     # ===================== INJECTION DATA =========================>  
-        submitted = st.form_submit_button("Envoyer")
-        if submitted:
-            data_insert(
-                table_name_1="after_takeoff",   
-                table_name_2="prediction_after_takeoff",
-                value_features=value_features, 
-                columns_features=columns_features_after_takeoff, 
-                y_pred="oui"        
-            )
-
+    if not submitted:
+        st.warning("Veuillez remplir tous les champs")
+    else:
+        send_data_to_api(data=value_features)
+        st.write(value_features)
+        
+        # ===================== AFFICHAGE PREDICTTION =========================>  
+        encart_prediction(color="#FF9999", predict="en retard")
+        encart_prediction(color="#90EE90", predict="à l'heure")
+        
 after_takeoff()

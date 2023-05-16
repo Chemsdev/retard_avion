@@ -6,6 +6,7 @@
 import streamlit as st
 import mysql.connector
 import requests
+import pandas as pd
 
 # Paramètre de connexion.
 cnx = mysql.connector.connect(
@@ -13,35 +14,10 @@ cnx = mysql.connector.connect(
     password="Ounissi69800", 
     host="chemsdineserver.mysql.database.azure.com", 
     port=3306, 
-    database="avion_retard", 
+    database="retard_avion", 
     ssl_disabled=False
 )
 cursor = cnx.cursor()    
-
-# Colonnes de la table before.
-columns_features_before_takeoff=[
-    'MONTH', 
-    'DAY_OF_MONTH', 
-    'DAY_OF_WEEK',
-    'CRS_DEP_TIME',
-    'CRS_ARR_TIME',
-    'CRS_ELAPSED_TIME',
-    'CARRIER',
-    'DISTANCE'
-]
-
-# Colonnes de la table after.
-columns_features_after_takeoff=[
-    'MONTH', 
-    'DAY_OF_MONTH', 
-    'DAY_OF_WEEK',
-    'CRS_DEP_TIME',
-    'CRS_ARR_TIME',
-    'CRS_ELAPSED_TIME',
-    'CARRIER',
-    'DISTANCE',
-    'DEP_DELAY'
-]
 
 # =======================================================================================================================================>
 #                                                            *SQL DATABASE*
@@ -74,16 +50,20 @@ def create_tables(table_name_1: str, table_name_2: str, connexion=cnx, cursor=cu
 #                                                            *SQL API*
 # =======================================================================================================================================>
 
-# Fonction pour envoyer les données à l'API.
-
 # Fonction pour récupérer les données depuis l'API.
-def send_data_to_api(data, url="http://localhost:8000/data/post"):
+def send_data_to_api(data:dict, url:str):
     response = requests.post(url, json=data)
     if response.status_code == 200:
         return st.success("Données insérées avec succès.")
     return st.error("Erreur lors de l'insertion des données.")
 
-
+# Fonction pour afficher les données depuis l'API.
+def get_data_from_api(url:str):
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json().get("data")
+        return data
+    return st.error("Erreur lors de la récupération des données.")
         
 # =======================================================================================================================================>
 #                                                            *FORMULAIRE*
@@ -172,3 +152,13 @@ def encart_prediction(color:str, predict:str):
         f'</div>',
         unsafe_allow_html=True
     )
+
+# =======================================================================================================================================>
+
+# Fonction permettent de mettre les noms de colonnes aux DataFrames.
+def columns_DataFrame(data1, data2, columns_features, columns_predict):
+    features   = pd.DataFrame(data1, columns=columns_features)
+    prediction = pd.DataFrame(data2, columns=columns_predict)
+    data = pd.merge(features, prediction, left_on='id', right_on='id_fk')
+    data = data.drop(["id_y", "id_fk", "id_x"], axis=1)
+    return data

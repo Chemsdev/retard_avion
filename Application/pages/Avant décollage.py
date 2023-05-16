@@ -12,14 +12,16 @@ def before_takeoff():
     
     # ===================== INJECTION DATA ==========================>  
     if submitted:
-        send_data_to_api(data=value_features)
+        send_data_to_api(data=value_features, url="http://localhost:8000/data/post/before")
+        st.write(value_features)        
+        
+        # ===================== AFFICHAGE PREDICTTION =========================>  
         encart_prediction(color="#FF9999", predict="en retard")
         encart_prediction(color="#90EE90", predict="à l'heure")
-        st.write(value_features)        
+        
     else:
         st.warning("Veuillez remplir tous les champs")
         
-        # ===================== AFFICHAGE PREDICTTION =========================>  
 
         
 before_takeoff()

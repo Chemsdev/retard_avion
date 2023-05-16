@@ -1,5 +1,5 @@
 import streamlit as st
-from functions import background_front, get_data_from_api, columns_DataFrame
+from functions import background_front, get_data_from_api, columns_DataFrame, delete_data_via_api
 
 columns_features_before_takeoff=[
     'id',
@@ -44,7 +44,7 @@ def data():
     feature_after,  prediction_after=get_data_from_api(url="http://localhost:8000/data/get/after")
     feature_before, prediction_before=get_data_from_api(url="http://localhost:8000/data/get/before")
     
-    after=columns_DataFrame(
+    after = columns_DataFrame(
         data1=feature_after, 
         data2=prediction_after, 
         columns_features=columns_features_after_takeoff, 
@@ -63,7 +63,11 @@ def data():
     st.write(after)  
     st.header("Les données Before")
     st.write(before)
-        
+    
+    if st.button("Supprimer toutes les données"):
+        delete_data_via_api(url="http://localhost:8000/data/delete")        
+    
+    
 data()
 
 

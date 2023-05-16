@@ -7,13 +7,13 @@ def after_takeoff():
     # ======================== FRONT ===============================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
     
-    # ======================== FORM ================================>  
+    # ========================= FORM ================================>  
     submitted, value_features = formulaire_traitement(titre="Vous souhaitez savoir ?", table="after")
             
-    # ===================== INJECTION DATA =========================>  
     if submitted:
+        
+        # ===================== INJECTION DATA ================================>  
         send_data_to_api(data=value_features, url="http://localhost:8000/data/post/after")
-        st.write(value_features)
         
         # ===================== AFFICHAGE PREDICTTION =========================>  
         encart_prediction(color="#FF9999", predict="en retard")

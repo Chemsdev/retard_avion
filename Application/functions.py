@@ -47,7 +47,7 @@ def create_tables(table_name_1: str, table_name_2: str, connexion=cnx, cursor=cu
     connexion.commit()
     
 # =======================================================================================================================================>
-#                                                            *SQL API*
+#                                                        *SQL API*
 # =======================================================================================================================================>
 
 # Fonction pour récupérer les données depuis l'API.
@@ -64,9 +64,18 @@ def get_data_from_api(url:str):
         data = response.json().get("data")
         return data
     return st.error("Erreur lors de la récupération des données.")
+
+# Fonction pour supprimer les données via l'API.
+def delete_data_via_api(url):
+    response = requests.delete(url)
+    if response.status_code == 200:
+        print("Les données ont été supprimées avec succès.")
+    else:
+        print("Erreur lors de la suppression des données.")
+
         
 # =======================================================================================================================================>
-#                                                            *FORMULAIRE*
+#                                                       *FORMULAIRE*
 # =======================================================================================================================================>
 
 def formulaire_traitement(titre:str, table:str):
@@ -90,7 +99,7 @@ def formulaire_traitement(titre:str, table:str):
     return submitted, value_features
 
 # =======================================================================================================================================>
-#                                                             *FRONT*
+#                                                       *FRONT*
 # =======================================================================================================================================>
 
 # Fonction permettent de mettre un background.
@@ -155,10 +164,11 @@ def encart_prediction(color:str, predict:str):
 
 # =======================================================================================================================================>
 
-# Fonction permettent de mettre les noms de colonnes aux DataFrames.
+# Fonction permettent de mettre les noms de colonnes aux DataFrames et faire un merge.
 def columns_DataFrame(data1, data2, columns_features, columns_predict):
     features   = pd.DataFrame(data1, columns=columns_features)
     prediction = pd.DataFrame(data2, columns=columns_predict)
     data = pd.merge(features, prediction, left_on='id', right_on='id_fk')
     data = data.drop(["id_y", "id_fk", "id_x"], axis=1)
     return data
+

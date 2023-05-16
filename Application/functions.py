@@ -4,8 +4,8 @@
 
 # Import des librairies.
 import streamlit as st
-import numpy as np
 import mysql.connector
+import requests
 import pandas as pd
 
 # Paramètre de connexion.
@@ -19,41 +19,25 @@ cnx = mysql.connector.connect(
 )
 cursor = cnx.cursor()    
 
-# Colonnes de la table before.
-columns_features_before_takeoff=[
-    'MONTH', 
-    'DAY_OF_MONTH', 
-    'DAY_OF_WEEK',
-    'CRS_DEP_TIME',
-    'CRS_ARR_TIME',
-    'CRS_ELAPSED_TIME',
-    'CARRIER',
-    'DISTANCE'
-]
-
-# Colonnes de la table after.
-columns_features_after_takeoff=[
-    'MONTH', 
-    'DAY_OF_MONTH', 
-    'DAY_OF_WEEK',
-    'CRS_DEP_TIME',
-    'CRS_ARR_TIME',
-    'CRS_ELAPSED_TIME',
-    'CARRIER',
-    'DISTANCE',
-    'DEP_DELAY'
-]
-
 # =======================================================================================================================================>
 #                                                            *SQL DATABASE*
 # =======================================================================================================================================>
 
 # Fonction permettant de créer les tables dans une base de données.
-def create_tables(table_name_1:str, table_name_2:str, features_columns:list, connexion=cnx, cursor=cursor):    
-    col_names_str = ','.join([f'{i} REAL' for i in features_columns])    
+def create_tables(table_name_1: str, table_name_2: str, connexion=cnx, cursor=cursor):
     cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table_name_1}
-                (id INT AUTO_INCREMENT PRIMARY KEY, {col_names_str})''')
-    print(f"Table '{table_name_1}' créée avec succès.")
+        (id INT AUTO_INCREMENT PRIMARY KEY,
+        Month INTEGER,
+        Day_of_month TEXT,
+        Day_of_week TEXT,
+        CRS_DEP_TIME TEXT,
+        CRS_ARR_TIME INTEGER,
+        CRS_ELAPSED_TIME INT,
+        CARRIER TEXT,
+        DISTANCE TEXT'''
+        + (", DEP_DELAY INTEGER" if table_name_1 == "after_takeoff" else "")
+        + ''')''')
+    print(f"Table '{table_name_1}' créée avec succès.")    
     cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table_name_2}
                 (id INT AUTO_INCREMENT PRIMARY KEY,
                 id_fk INT,
@@ -63,46 +47,50 @@ def create_tables(table_name_1:str, table_name_2:str, features_columns:list, con
     connexion.commit()
     
 # =======================================================================================================================================>
-
-# Fonction permettent d'insérer des données dans les tables cible.
-def data_insert(table_name_1: str, table_name_2: str, value_features: list, columns_features: list, y_pred: str, connexion=cnx, cursor=cursor):
-    table1_sql = f"INSERT INTO {table_name_1} ({', '.join(columns_features)}) VALUES ({', '.join(['%s' for _ in range(len(columns_features))])})"
-    cursor.execute(table1_sql, value_features)
-    inserted_id = cursor.lastrowid
-    table2_columns = ["id_fk", "y_pred"]
-    table2_values = [inserted_id, y_pred]
-    table2_sql = f"INSERT INTO {table_name_2} ({', '.join(table2_columns)}) VALUES ({', '.join(['%s' for _ in range(len(table2_columns))])})"
-    cursor.execute(table2_sql, table2_values)
-    print("Données insérées avec succès.")
-    connexion.commit()
-    
+#                                                            *SQL API*
 # =======================================================================================================================================>
 
-# Fonction permettent de supprimer 2 tables.
-def delete_content_tables(connexion=cnx):
-    cursor.execute("DELETE FROM prediction_after_takeoff")
-    cursor.execute("DELETE FROM prediction_before_takeoff")
-    cursor.execute("DELETE FROM after_takeoff")
-    cursor.execute("DELETE FROM before_takeoff")
-    connexion.commit()
+# Fonction pour récupérer les données depuis l'API.
+def send_data_to_api(data:dict, url:str):
+    response = requests.post(url, json=data)
+    if response.status_code == 200:
+        return st.success("Données insérées avec succès.")
+    return st.error("Erreur lors de l'insertion des données.")
 
+# Fonction pour afficher les données depuis l'API.
+def get_data_from_api(url:str):
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json().get("data")
+        return data
+    return st.error("Erreur lors de la récupération des données.")
+        
+# =======================================================================================================================================>
+#                                                            *FORMULAIRE*
 # =======================================================================================================================================>
 
-# Fonction permettent d'afficher les tables dans la page data.
-def show_page(title:str, name_table_features:str, name_table_prediction:str):
-    table1 = pd.read_sql_query(f"SELECT * FROM {name_table_features}",   cnx)
-    table2 = pd.read_sql_query(f"SELECT * FROM {name_table_prediction}", cnx)
-    st.title(title)
-    if table1.empty or table2.empty:
-        return st.error("Base de données vide !")
-    else:
-        st.markdown("**Les Features**")
-        st.write(table1)
-        st.markdown("**Les Prédictions**")
-        st.write(table2)
-    
+def formulaire_traitement(titre:str, table:str):
+    st.title(titre)
+    with st.form(f"formulaire_{table}"):
+        st.write("**Veuillez remplir le formulaire**")
+        value_features = {
+            "question_1" : st.selectbox(f'**Veuillez saisir le mois**', [i for i in range(1, 13)]),                # Month
+            "question_2" : st.selectbox(f'**Veuillez saisir le jour du mois**', [i for i in range(1, 32)]),        # Day of month
+            "question_3" : st.selectbox(f'**Veuillez saisir le jour de la semaine**', [i for i in range(1, 8)]),   # Day of week
+            "question_4" : st.text_input(f'**Veuillez saisir l"heure théorique de départ**'),                      # CRS DEP TIME need
+            "question_5" : st.text_input(f'**Veuillez saisir l"heure théorique d"arrivée**'),                      # CRS ARR TIME need       
+            "question_6" : st.text_input("**Temps théorique entre l'arrivée et le départ.**"),                     # CRS_ELAPSED_TIME
+            "question_7" : st.text_input("**Veuillez saisir le code de compagnie aérienne**") ,                    # CARRIER
+            "question_8" : st.text_input("**Veuillez saisir la distance en milliers du trajet**")                  # Distance
+        }
+        if table == "after":
+            question_9 = st.text_input("**Veuillez saisir le retard en minutes depuis le décollage de l'avion**")   # DEP DELAY
+            value_features["question_9"] = question_9
+        submitted = st.form_submit_button("Envoyer")
+    return submitted, value_features
+
 # =======================================================================================================================================>
-#                                                          *FRONT*
+#                                                             *FRONT*
 # =======================================================================================================================================>
 
 # Fonction permettent de mettre un background.
@@ -128,10 +116,8 @@ def css_page_front():
     st.markdown("""
     <style>
         body {
-        background-image: url("data:image/png;base64,%s");
         background-size: cover;
         }
-        
         h1 {
             font-family: 'Comic Sans MS', cursive, sans-serif;
             text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
@@ -143,4 +129,36 @@ def css_page_front():
 
 # =======================================================================================================================================>
 
+# fonction permettent de créer l'encart pour afficher la prédiction.
+def encart_prediction(color:str, predict:str):
+    st.markdown("")
+    box_style = f"""
+        padding: 20px;
+        width: 230px;
+        height: 80px;
+        border: 2px solid {color};
+        border-radius: 5px
+    """
 
+    text_style = f"""
+        color: {color};
+        font-size: 18px;
+        font-weight: bold;
+    """
+
+    st.markdown(
+        f'<div style="{box_style}">'
+        f'<p style="{text_style}">Votre vol est {predict} !</p>'
+        f'</div>',
+        unsafe_allow_html=True
+    )
+
+# =======================================================================================================================================>
+
+# Fonction permettent de mettre les noms de colonnes aux DataFrames.
+def columns_DataFrame(data1, data2, columns_features, columns_predict):
+    features   = pd.DataFrame(data1, columns=columns_features)
+    prediction = pd.DataFrame(data2, columns=columns_predict)
+    data = pd.merge(features, prediction, left_on='id', right_on='id_fk')
+    data = data.drop(["id_y", "id_fk", "id_x"], axis=1)
+    return data

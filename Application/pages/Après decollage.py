@@ -23,3 +23,4 @@ def after_takeoff():
         st.warning("Veuillez remplir tous les champs")
         
 after_takeoff()
+

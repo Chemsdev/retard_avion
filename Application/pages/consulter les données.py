@@ -8,8 +8,8 @@ from functions import columns_features_after_takeoff, columns_features_before_ta
 def data():
          
     # ========================== API SQL ===============================>
-    feature_after,  prediction_after=get_data_from_api(url="http://localhost:8000/data/get/after")
-    feature_before, prediction_before=get_data_from_api(url="http://localhost:8000/data/get/before")
+    feature_after,  prediction_after  = get_data_from_api(url="http://localhost:8000/data/get/after")
+    feature_before, prediction_before = get_data_from_api(url="http://localhost:8000/data/get/before")
     
     after = columns_DataFrame(
         data1=feature_after, 
@@ -35,7 +35,6 @@ def data():
     
     if st.button("Supprimer toutes les données"):
         delete_data_via_api(url="http://localhost:8000/data/delete")        
-    
     
 data()
 

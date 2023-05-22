@@ -28,9 +28,9 @@ def data():
     # ========================== PAGE ================================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
     st.title("Visualisation des données")
-    st.header("Les données Après décollage")
+    st.markdown("**Les données Après décollage**")
     st.write(after)  
-    st.header("Les données Avant décollage")
+    st.markdown("**Les données Avant décollage**")
     st.write(before)
     
     if st.button("Supprimer toutes les données"):

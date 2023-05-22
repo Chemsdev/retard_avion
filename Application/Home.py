@@ -13,10 +13,10 @@ def main():
     st.title("Bienvenue")
     st.markdown("""
                 Nous sommes une entreprise spécialisée dans les services de prédiction des retards de vols. 
-                Notre approche novatrice permet aux clients de savoir à l'avance si leur vol sera en retard ou non. 
-                Pour cela, nous mettons à leur disposition deux formulaires distincts : l'un pour les vols déjà réalisés et l'autre pour les vols 
-                avant le décollage. Grâce à ces formulaires, nos clients peuvent obtenir des prévisions précises et fiables sur les retards 
-                potentiels, leur permettant ainsi de mieux planifier leurs voyages et d'éviter les désagréments liés aux retards aériens.
+                Notre approche novatrice permet de vous faire savoir à l'avance si votre vol sera en retard ou non. 
+                Pour cela, nous mettons à votre disposition deux formulaires distincts : l'un pour les vols déjà réalisés et l'autre pour les vols 
+                avant le décollage. Grâce à ces formulaires, vous pourrez obtenir des prévisions précises et fiables sur les retards 
+                potentiels, vous permettant ainsi de mieux planifier vos voyages et d'éviter les désagréments liés aux retards aériens.
             """)
     
     

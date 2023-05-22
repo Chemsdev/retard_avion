@@ -116,17 +116,17 @@ def formulaire_traitement(titre:str, table:str):
     with st.form(f"formulaire_{table}"):
         st.write("**Veuillez remplir le formulaire**")
         value_features = {
-            "question_1" : st.selectbox(f'Veuillez saisir le mois', [i for i in range(1, 13)]),                # Month
-            "question_2" : st.selectbox(f'Veuillez saisir le jour du mois', [i for i in range(1, 32)]),        # Day of month
-            "question_3" : st.selectbox(f'Veuillez saisir le jour de la semaine', [i for i in range(1, 8)]),   # Day of week
-            "question_4" : str(st.time_input(f'Veuillez saisir l"heure théorique de départ')),                      # CRS DEP TIME need
-            "question_5" : str(st.time_input(f'Veuillez saisir l"heure théorique d"arrivée')),                      # CRS ARR TIME need       
-            "question_6" : str(st.time_input("Temps théorique entre l'arrivée et le départ.")),                     # CRS_ELAPSED_TIME
-            "question_7" : st.text_input("Veuillez saisir le code de compagnie aérienne") ,                    # CARRIER
-            "question_8" : st.text_input("Veuillez saisir la distance en milliers du trajet")                  # Distance
+            "question_1" : st.selectbox(f'**Veuillez saisir le mois**', [i for i in range(1, 13)]),                # Month
+            "question_2" : st.selectbox(f'**Veuillez saisir le jour du mois**', [i for i in range(1, 32)]),        # Day of month
+            "question_3" : st.selectbox(f'**Veuillez saisir le jour de la semaine**', [i for i in range(1, 8)]),   # Day of week
+            "question_4" : str(st.time_input(f'**Veuillez saisir l"heure théorique de départ**')),                      # CRS DEP TIME need
+            "question_5" : str(st.time_input(f'**Veuillez saisir l"heure théorique d"arrivée**')),                      # CRS ARR TIME need       
+            "question_6" : str(st.time_input("**Temps théorique entre l'arrivée et le départ.**")),                     # CRS_ELAPSED_TIME
+            "question_7" : st.text_input("**Veuillez saisir le code de compagnie aérienne**") ,                    # CARRIER
+            "question_8" : st.text_input("**Veuillez saisir la distance en milliers du trajet**")                  # Distance
         }
         if table == "after":
-            question_9 = st.text_input("Veuillez saisir le retard en minutes depuis le décollage de l'avion")   # DEP DELAY
+            question_9 = st.text_input("**Veuillez saisir le retard en minutes depuis le décollage de l'avion**")   # DEP DELAY
             value_features["question_9"] = question_9
         submitted = st.form_submit_button("Envoyer")
     return submitted, value_features
@@ -160,14 +160,14 @@ def css_page_front():
         background-size: cover;
         }
         h1 {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
             text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
             font-color : #F5F5DC;
             font-size:67px;
         }
         p {
+            text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
             font-size:25px;
-            text-shadow: 1px 1px 2px pink;
+            # text-shadow: 1px 1px 2px pink;
         }
     </style>
     """, unsafe_allow_html=True)

@@ -19,7 +19,6 @@ def main():
                 potentiels, vous permettant ainsi de mieux planifier vos voyages et d'éviter les désagréments liés aux retards aériens.
             """)
     
-    
     # ========================= SQL ===============================>  
     create_tables(
         table_name_1="after_takeoff",   

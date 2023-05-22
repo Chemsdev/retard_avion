@@ -20,7 +20,7 @@ def after_takeoff():
         encart_prediction(color="#90EE90", predict="à l'heure")
         
     else:
-        st.warning("Veuillez remplir tous les champs")
+        st.warning("Veuillez lremplir tous les champs")
         
 after_takeoff()
 

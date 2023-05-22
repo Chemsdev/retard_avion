@@ -143,7 +143,7 @@ def background_front(url:str):
          .stApp {{
              background-image: url({url});
              background-attachment: fixed;
-             background-size: cover
+             background-size: cover;
          }}
          </style>
          """,
@@ -164,6 +164,10 @@ def css_page_front():
             text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
             font-color : #F5F5DC;
             font-size:67px;
+        }
+        p {
+            font-size:25px;
+            text-shadow: 1px 1px 2px pink;
         }
     </style>
     """, unsafe_allow_html=True)

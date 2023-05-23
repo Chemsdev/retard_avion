@@ -15,7 +15,7 @@ def before_takeoff():
         # ===================== INJECTION DATA ================================>  
         send_data_to_api(data=value_features, url="http://localhost:8000/data/post/before")
         
-        # ===================== AFFICHAGE PREDICTTION =========================>  
+        # ===================== AFFICHAGE PREDICTION =========================>  
         encart_prediction(color="#FF9999", predict="en retard")
         encart_prediction(color="#90EE90", predict="à l'heure")
         

@@ -55,6 +55,8 @@ columns_prediction=[
 
 # Import du modèle
 model_before = pickle.load(open('before_model.pickle', 'rb'))
+model_after  = pickle.load(open('after_model.pickle', 'rb'))
+
 
 # =======================================================================================================================================>
 #                                                      *SQL DATABASE*
@@ -218,8 +220,9 @@ def prediction_model(data, model):
         time = data[f"question_{i}"]
         total_minutes = (60 * int(time[0:2])) + int(time[3:5])
         data[f"question_{i}"] = total_minutes
-    data_array = np.array(list(data.values())).reshape(1, -1)
+    data_array = np.array(list(data.values()), dtype=np.float64).reshape(1, -1)
     pred = model.predict(data_array)
     data_for_bdd["Prediction"] = int(round(pred.item()))
     return data_for_bdd
+
 

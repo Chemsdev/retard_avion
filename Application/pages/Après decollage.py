@@ -19,7 +19,7 @@ def after_takeoff():
         send_data_to_api(data=value_features, url="http://localhost:8000/data/post/after")
         
         # ===================== AFFICHAGE PREDICTION ==========================>  
-        if value_features["Prediction"] == 0:
+        if value_features["Prediction"] == 1:
             encart_prediction(color="#FF9999", predict="en retard")
         else:
             encart_prediction(color="#90EE90", predict="à l'heure")

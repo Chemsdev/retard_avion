@@ -55,6 +55,8 @@ columns_prediction=[
 
 # Import du modèle
 model_before = pickle.load(open('before_model.pickle', 'rb'))
+model_after  = pickle.load(open('after_model.pickle', 'rb'))
+
 
 # =======================================================================================================================================>
 #                                                      *SQL DATABASE*

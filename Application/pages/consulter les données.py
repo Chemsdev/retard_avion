@@ -27,7 +27,7 @@ def data():
     
     # ========================== PAGE ================================>
     background_front(url="https://rare-gallery.com/uploads/posts/352939-4k-wallpaper.jpg")
-    st.title("Visualisation des données")
+    st.title("Consultation des données")
     st.markdown("**Les données Après décollage**")
     st.write(after)  
     st.markdown("**Les données Avant décollage**")

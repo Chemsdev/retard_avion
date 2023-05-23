@@ -14,8 +14,7 @@ def after_takeoff():
         
         # ===================== PREDICITON ====================================>  
         value_features = prediction_model(data=value_features, model=model_after)
-        st.write(value_features)
-        
+                
         # ===================== INJECTION DATA ================================>  
         send_data_to_api(data=value_features, url="http://localhost:8000/data/post/after")
         

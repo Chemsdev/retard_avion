@@ -7,6 +7,8 @@ import streamlit as st
 import mysql.connector
 import requests
 import pandas as pd
+import pickle
+import numpy as np
 
 # Paramètre de connexion.
 cnx = mysql.connector.connect(
@@ -53,6 +55,9 @@ columns_prediction=[
     "y_pred"
 ]
 
+# Import du modèle
+model = pickle.load(open('model.pickle', 'rb'))
+
 # =======================================================================================================================================>
 #                                                      *SQL DATABASE*
 # =======================================================================================================================================>
@@ -61,14 +66,14 @@ columns_prediction=[
 def create_tables(table_name_1: str, table_name_2: str, connexion=cnx, cursor=cursor):
     cursor.execute(f'''CREATE TABLE IF NOT EXISTS {table_name_1}
         (id INT AUTO_INCREMENT PRIMARY KEY,
-        Month TEXT,
-        Day_of_month TEXT,
-        Day_of_week TEXT,
+        Month INTEGER,
+        Day_of_month INTEGER,
+        Day_of_week INTEGER,
         CRS_DEP_TIME TEXT,
         CRS_ARR_TIME TEXT,
         CRS_ELAPSED_TIME TEXT,
-        CARRIER TEXT,
-        DISTANCE TEXT'''
+        CARRIER INTEGER,
+        DISTANCE INTEGER'''
         + (", DEP_DELAY INTEGER" if table_name_1 == "after_takeoff" else "")
         + ''')''')
     print(f"Table '{table_name_1}' créée avec succès.")    
@@ -116,14 +121,14 @@ def formulaire_traitement(titre:str, table:str):
     with st.form(f"formulaire_{table}"):
         st.write("**Veuillez remplir le formulaire**")
         value_features = {
-            "question_1" : st.selectbox(f'**Veuillez saisir le mois**', [i for i in range(1, 13)]),                # Month
-            "question_2" : st.selectbox(f'**Veuillez saisir le jour du mois**', [i for i in range(1, 32)]),        # Day of month
-            "question_3" : st.selectbox(f'**Veuillez saisir le jour de la semaine**', [i for i in range(1, 8)]),   # Day of week
-            "question_4" : str(st.time_input(f'**Veuillez saisir l"heure théorique de départ**')),                      # CRS DEP TIME need
-            "question_5" : str(st.time_input(f'**Veuillez saisir l"heure théorique d"arrivée**')),                      # CRS ARR TIME need       
-            "question_6" : str(st.time_input("**Temps théorique entre l'arrivée et le départ.**")),                     # CRS_ELAPSED_TIME
-            "question_7" : st.text_input("**Veuillez saisir le code de compagnie aérienne**") ,                    # CARRIER
-            "question_8" : st.text_input("**Veuillez saisir la distance en milliers du trajet**")                  # Distance
+            "question_1" : st.selectbox(f'Veuillez saisir le mois', [i for i in range(1, 13)]),                # Month
+            "question_2" : st.selectbox(f'Veuillez saisir le jour du mois', [i for i in range(1, 32)]),        # Day of month
+            "question_3" : st.selectbox(f'Veuillez saisir le jour de la semaine', [i for i in range(1, 8)]),   # Day of week
+            "question_4" : str(st.time_input(f'Veuillez saisir l"heure théorique de départ')),                      # CRS DEP TIME need
+            "question_5" : str(st.time_input(f'Veuillez saisir l"heure théorique d"arrivée')),                      # CRS ARR TIME need       
+            "question_6" : str(st.time_input("Temps théorique entre l'arrivée et le départ.")),                     # CRS_ELAPSED_TIME
+            "question_7" : st.number_input("Veuillez saisir le code de compagnie aérienne") ,                    # CARRIER
+            "question_8" : st.number_input("Veuillez saisir la distance en milliers du trajet")                  # Distance
         }
         if table == "after":
             question_9 = st.text_input("**Veuillez saisir le retard en minutes depuis le décollage de l'avion**")   # DEP DELAY
@@ -208,3 +213,19 @@ def columns_DataFrame(data1, data2, columns_features, columns_predict):
     data = data.drop(["id_y", "id_fk", "id_x"], axis=1)
     return data
 
+# =======================================================================================================================================>
+
+# Fonction permettent de préparer les données aux modèles et faire la prédiction.
+def prediction_model(data, model=model):
+    data_for_bdd = data.copy()
+    for i in (4, 5, 6):
+        time = data[f"question_{i}"]
+        total_minutes = (60 * int(time[0:2])) + int(time[3:5])
+        data[f"question_{i}"] = total_minutes
+    data_array = np.array(list(data.values())).reshape(1, -1)
+    pred = model.predict(data_array)
+    data_for_bdd["Prediction"] = str(round(pred.item()))
+    return data_for_bdd
+
+
+  

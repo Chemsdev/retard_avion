@@ -1,6 +1,6 @@
 # Import des utilitaires.
 import streamlit as st 
-from functions import formulaire_traitement, background_front, encart_prediction, send_data_to_api, prediction_model
+from functions import formulaire_traitement, background_front, encart_prediction, send_data_to_api, prediction_model, model_before
 
 def after_takeoff():
     
@@ -13,7 +13,7 @@ def after_takeoff():
     if submitted:
         
         # ===================== PREDICITON ====================================>  
-        value_features = prediction_model(value_features)
+        value_features = prediction_model(data=value_features, model=model_before)
         
         # ===================== INJECTION DATA ================================>  
         send_data_to_api(data=value_features, url="http://localhost:8000/data/post/before")

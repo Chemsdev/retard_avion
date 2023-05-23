@@ -1,6 +1,6 @@
 # Import des utilitaires.
 import streamlit as st 
-from functions import background_front, send_data_to_api, encart_prediction, formulaire_traitement
+from functions import background_front, send_data_to_api, encart_prediction, formulaire_traitement, prediction_model
 
 def before_takeoff():
     
@@ -12,12 +12,17 @@ def before_takeoff():
     
     if submitted:
         
+        # ===================== PREDICITON ====================================>  
+        value_features = prediction_model(value_features)
+        
         # ===================== INJECTION DATA ================================>  
         send_data_to_api(data=value_features, url="http://localhost:8000/data/post/before")
         
-        # ===================== AFFICHAGE PREDICTION =========================>  
-        encart_prediction(color="#FF9999", predict="en retard")
-        encart_prediction(color="#90EE90", predict="à l'heure")
+        # ===================== AFFICHAGE PREDICTION ==========================>  
+        if value_features["Prediction"] == 0:
+            encart_prediction(color="#FF9999", predict="en retard")
+        else:
+            encart_prediction(color="#90EE90", predict="à l'heure")
         
     else:
         st.warning("Veuillez remplir tous les champs")

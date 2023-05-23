@@ -56,7 +56,7 @@ columns_prediction=[
 ]
 
 # Import du modèle
-model = pickle.load(open('before_model.pickle', 'rb'))
+model_before = pickle.load(open('before_model.pickle', 'rb'))
 
 # =======================================================================================================================================>
 #                                                      *SQL DATABASE*
@@ -216,7 +216,7 @@ def columns_DataFrame(data1, data2, columns_features, columns_predict):
 # =======================================================================================================================================>
 
 # Fonction permettent de préparer les données aux modèles et faire la prédiction.
-def prediction_model(data, model=model):
+def prediction_model(data, model):
     data_for_bdd = data.copy()
     for i in (4, 5, 6):
         time = data[f"question_{i}"]

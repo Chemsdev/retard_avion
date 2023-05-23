@@ -30,7 +30,6 @@ columns_features_before_takeoff=[
     'CRS_DEP_TIME',
     'CRS_ARR_TIME',
     'CRS_ELAPSED_TIME',
-    'CARRIER',
     'DISTANCE'
 ]
 
@@ -43,7 +42,6 @@ columns_features_after_takeoff=[
     'CRS_DEP_TIME',
     'CRS_ARR_TIME',
     'CRS_ELAPSED_TIME',
-    'CARRIER',
     'DISTANCE',
     'DEP_DELAY'
 ]
@@ -72,7 +70,6 @@ def create_tables(table_name_1: str, table_name_2: str, connexion=cnx, cursor=cu
         CRS_DEP_TIME TEXT,
         CRS_ARR_TIME TEXT,
         CRS_ELAPSED_TIME TEXT,
-        CARRIER INTEGER,
         DISTANCE INTEGER'''
         + (", DEP_DELAY INTEGER" if table_name_1 == "after_takeoff" else "")
         + ''')''')
@@ -127,12 +124,11 @@ def formulaire_traitement(titre:str, table:str):
             "question_4" : str(st.time_input(f'Veuillez saisir l"heure théorique de départ')),                      # CRS DEP TIME need
             "question_5" : str(st.time_input(f'Veuillez saisir l"heure théorique d"arrivée')),                      # CRS ARR TIME need       
             "question_6" : str(st.time_input("Temps théorique entre l'arrivée et le départ.")),                     # CRS_ELAPSED_TIME
-            "question_7" : st.number_input("Veuillez saisir le code de compagnie aérienne") ,                    # CARRIER
-            "question_8" : st.number_input("Veuillez saisir la distance en milliers du trajet")                  # Distance
+            "question_7" : st.number_input("Veuillez saisir la distance en milliers du trajet")                  # Distance
         }
         if table == "after":
-            question_9 = st.text_input("**Veuillez saisir le retard en minutes depuis le décollage de l'avion**")   # DEP DELAY
-            value_features["question_9"] = question_9
+            question_8 = st.text_input("**Veuillez saisir le retard en minutes depuis le décollage de l'avion**")   # DEP DELAY
+            value_features["question_8"] = question_8
         submitted = st.form_submit_button("Envoyer")
     return submitted, value_features
 
@@ -224,8 +220,6 @@ def prediction_model(data, model):
         data[f"question_{i}"] = total_minutes
     data_array = np.array(list(data.values())).reshape(1, -1)
     pred = model.predict(data_array)
-    data_for_bdd["Prediction"] = str(round(pred.item()))
+    data_for_bdd["Prediction"] = int(round(pred.item()))
     return data_for_bdd
 
-
-  
